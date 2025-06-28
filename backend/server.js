@@ -18,7 +18,16 @@ const PORT = process.env.PORT || 5000;
 
 // Handle CORS preflight requests immediately
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://tradelogix-full.vercel.app');
+  const allowedOrigins = [
+    'https://tradelogix-full.vercel.app',
+    'https://tradelogix-full-ffrg6gz2i-mehdi4556s-projects.vercel.app'
+  ];
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Origin, Accept');
   res.header('Access-Control-Allow-Credentials', 'true');
