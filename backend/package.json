@@ -5,10 +5,11 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "cd ../frontend && npm install && npm run build",
+    "build": "echo 'No build step needed for serverless'",
     "dev": "nodemon server.js",
     "seed": "node utils/seedData.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vercel-build": "echo 'Build completed'"
   },
   "keywords": ["trading", "journal", "backend", "api"],
   "author": "",
