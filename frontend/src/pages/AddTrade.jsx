@@ -265,16 +265,22 @@ export default function AddTrade() {
                             <Button
                               type="button"
                               variant={field.value === 'OPEN' ? 'default' : 'outline'}
-                              className="flex-1"
-                              onClick={() => field.onChange('OPEN')}
+                              className={`flex-1 ${field.value === 'OPEN' ? 'bg-blue-600 hover:bg-blue-700 border-blue-600 text-white' : 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'}`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                field.onChange('OPEN');
+                              }}
                             >
                               OPEN
                             </Button>
                             <Button
                               type="button"
                               variant={field.value === 'CLOSED' ? 'default' : 'outline'}
-                              className="flex-1"
-                              onClick={() => field.onChange('CLOSED')}
+                              className={`flex-1 ${field.value === 'CLOSED' ? 'bg-orange-600 hover:bg-orange-700 border-orange-600 text-white' : 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'}`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                field.onChange('CLOSED');
+                              }}
                             >
                               CLOSED
                             </Button>
@@ -387,6 +393,7 @@ export default function AddTrade() {
                           <Button 
                             type="button" 
                             variant="outline" 
+                            className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white transition-all duration-200"
                             onClick={() => {
                               setImagePreview(null);
                               setImageFile(null);
@@ -397,16 +404,16 @@ export default function AddTrade() {
                         </div>
                       </div>
                     ) : (
-                      <div className="text-center">
-                        <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
-                        <div className="mt-4">
-                          <Label htmlFor="image-upload" className="cursor-pointer text-white">
+                      <Label htmlFor="image-upload" className="cursor-pointer block">
+                        <div className="text-center hover:bg-gray-750 transition-colors duration-200 p-4 rounded-lg">
+                          <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
+                          <div className="mt-4">
                             <span className="text-blue-400 font-medium">Click to upload</span>
                             <span className="text-gray-400"> or drag and drop</span>
-                          </Label>
-                          <p className="text-xs text-gray-400 mt-1">
-                            PNG, JPG, GIF up to 10MB
-                          </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              PNG, JPG, GIF up to 10MB
+                            </p>
+                          </div>
                         </div>
                         <input
                           id="image-upload"
@@ -415,7 +422,7 @@ export default function AddTrade() {
                           accept="image/*"
                           onChange={handleImageChange}
                         />
-                      </div>
+                      </Label>
                     )}
                   </div>
                 </div>
@@ -424,14 +431,14 @@ export default function AddTrade() {
                   <Button 
                     type="button" 
                     variant="outline" 
-                    className="flex-1"
+                    className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white hover:border-gray-500 transition-all duration-200"
                     onClick={() => navigate('/dashboard')}
                   >
                     Cancel
                   </Button>
                   <Button 
                     type="submit" 
-                    className="flex-1"
+                    className="flex-1 bg-green-600 hover:bg-green-700 border-green-600 text-white font-medium transition-all duration-200 disabled:bg-gray-600 disabled:border-gray-600 disabled:cursor-not-allowed"
                     disabled={loading}
                   >
                     {loading ? 'Adding Trade...' : 'Add Trade'}
