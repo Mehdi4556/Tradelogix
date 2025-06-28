@@ -30,7 +30,7 @@ mongoose.connect(mongoURI)
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176', 'http://localhost:5177'],
+  origin: process.env.CLIENT_URL || ['https://tradelogix-frontend.vercel.app', 'http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176', 'http://localhost:5177'],
   credentials: true
 }));
 
