@@ -1,38 +1,35 @@
 # Development Environment Guide
 
 ## Current Setup:
-- **Production**: Uses `https://tradelogix-backend.vercel.app` (default)
-- **Local Development**: Use local backend when needed
+- **Local Development**: Uses `http://localhost:5000/api` (default)
+- **Backend**: Run locally on port 5000
 
-## How to Switch:
+## How to Run:
 
-### 🌐 Use Production Backend (Default)
+### 🏠 Local Development Setup
 ```bash
-# Your .env file is already set to production
+# Terminal 1: Start the backend
+cd backend
+npm install
+npm run dev
+
+# Terminal 2: Start the frontend
+cd frontend
+npm install
 npm run dev
 ```
 
-### 🏠 Use Local Backend
-```bash
-# Create a local override (this file is gitignored):
-echo VITE_API_URL=http://localhost:5000 > .env.local
-npm run dev
-```
+### 🔧 Environment Configuration
+The API URL is configured in `src/config/api.js`:
+- Default: `http://localhost:5000/api`
+- Can be overridden with `VITE_API_URL` environment variable
 
-### 🔄 Switch Back to Production
+### 📝 Optional: Create .env.local for custom API URL
 ```bash
-# Remove the local override:
-del .env.local
-npm run dev
-```
-
-## Vercel Environment Variables:
-Make sure your Vercel project has:
-```
-VITE_API_URL=https://tradelogix-backend.vercel.app
+# Create a local environment file (this file is gitignored):
+echo VITE_API_URL=http://localhost:5000/api > .env.local
 ```
 
 ## File Priority:
-1. `.env.local` (highest - local development)
-2. `.env` (production backend)
-3. Fallback in `config/api.js` (production backend) 
+1. `.env.local` (highest - custom override)
+2. Fallback in `config/api.js` (localhost:5000) 
