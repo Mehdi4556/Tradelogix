@@ -136,7 +136,7 @@ export default function Calendar() {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen bg-black pt-24 p-6">
+        <div className="min-h-screen bg-black pt-20 sm:pt-24 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto">
             {/* Header Skeleton */}
             <div className="mb-8 animate-in fade-in-0 slide-in-from-top-4 duration-300">
@@ -218,7 +218,7 @@ export default function Calendar() {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-black pt-24 p-6">
+      <div className="min-h-screen bg-black pt-20 sm:pt-24 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
         <div className="mb-8 animate-in fade-in-0 slide-in-from-top-4 duration-300">
           <div className="flex items-center space-x-3 mb-4">
