@@ -24,6 +24,16 @@ app.use((req, res, next) => {
     'https://tradelogix-full-ffrg6gz2i-mehdi4556s-projects.vercel.app'
   ];
   
+  // Add localhost origins for development
+  if (process.env.NODE_ENV !== 'production') {
+    allowedOrigins.push(
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:3000'
+    );
+  }
+  
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
