@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
-const path = require('path');
 require('dotenv').config();
 
 // Import routes
@@ -47,12 +46,6 @@ mongoose.connect(mongoURI)
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Serve static files (uploaded images)
-app.use('/uploads', express.static('uploads'));
-
-// Serve frontend build files
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // Logging middleware
 if (process.env.NODE_ENV === 'development') {

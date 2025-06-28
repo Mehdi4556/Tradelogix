@@ -1,18 +1,27 @@
 const multer = require('multer');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const Trade = require('../models/Trade');
 const catchAsync = require('../utils/catchAsync');
 const APIFeatures = require('../utils/apiFeatures');
 const dayjs = require('dayjs');
 
-// Configure multer for image uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/trades/');
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'trade-' + uniqueSuffix + path.extname(file.originalname));
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Configure Cloudinary storage for trade images
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'tradelogix/trades',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+    transformation: [
+      { width: 1200, height: 800, crop: 'limit', quality: 'auto' }
+    ]
   }
 });
 
@@ -86,9 +95,9 @@ exports.createTrade = catchAsync(async (req, res, next) => {
   // Add user ID to the request body
   req.body.user = req.user.id;
 
-  // Add image path if file was uploaded
+  // Add image URL if file was uploaded to Cloudinary
   if (req.file) {
-    req.body.image = `/uploads/trades/${req.file.filename}`;
+    req.body.image = req.file.path; // Cloudinary returns the full URL in file.path
   }
 
   const newTrade = await Trade.create(req.body);
