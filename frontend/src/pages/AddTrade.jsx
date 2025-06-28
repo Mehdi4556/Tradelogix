@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { FiUpload, FiImage, FiDollarSign, FiCalendar, FiFileText, FiTrendingUp, FiTrendingDown, FiPlus } from 'react-icons/fi';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -83,7 +84,7 @@ export default function AddTrade() {
         formData.append('image', imageFile);
       }
 
-      const response = await axios.post('http://localhost:5000/api/trades', formData, {
+      const response = await axios.post(`${API_BASE_URL}/api/trades`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${localStorage.getItem('token')}`

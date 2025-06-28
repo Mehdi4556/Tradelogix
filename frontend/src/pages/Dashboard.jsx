@@ -18,6 +18,7 @@ import toast from 'react-hot-toast';
 import { Skeleton } from '../components/ui/skeleton';
 import Navigation from '../components/Navigation';
 import { useAuth } from '../contexts/AuthContext';
+import { API_BASE_URL } from '../config/api';
 
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
@@ -42,7 +43,7 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/trades', {
+      const response = await axios.get(`${API_BASE_URL}/api/trades`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -102,7 +103,7 @@ const Dashboard = () => {
 
   const handleDeleteTrade = async (tradeId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/trades/${tradeId}`, {
+      await axios.delete(`${API_BASE_URL}/api/trades/${tradeId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

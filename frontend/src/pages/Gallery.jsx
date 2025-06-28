@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { Skeleton } from '../components/ui/skeleton';
 import TradeModal from '../components/TradeModal';
 import Navigation from '../components/Navigation';
+import { API_BASE_URL } from '../config/api';
 
 const Gallery = () => {
   const [trades, setTrades] = useState([]);
@@ -32,7 +33,7 @@ const Gallery = () => {
   const fetchTrades = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/trades', {
+      const response = await axios.get(`${API_BASE_URL}/api/trades`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -147,7 +148,7 @@ const Gallery = () => {
 
   const handleDeleteTrade = async (tradeId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/trades/${tradeId}`, {
+      await axios.delete(`${API_BASE_URL}/api/trades/${tradeId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -343,7 +344,7 @@ const Gallery = () => {
                         <img
                           src={trade.image?.startsWith('http') 
                             ? trade.image 
-                            : `http://localhost:5000${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
+                            : `${API_BASE_URL}${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
                           }
                           alt={`Trade ${trade.symbol}`}
                           className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
@@ -509,7 +510,7 @@ const Gallery = () => {
                   <img
                     src={deleteConfirm.image?.startsWith('http') 
                       ? deleteConfirm.image 
-                      : `http://localhost:5000${deleteConfirm.image?.startsWith('/') ? deleteConfirm.image : `/uploads/trades/${deleteConfirm.image}`}`
+                      : `${API_BASE_URL}${deleteConfirm.image?.startsWith('/') ? deleteConfirm.image : `/uploads/trades/${deleteConfirm.image}`}`
                     }
                     alt={`Trade ${deleteConfirm.symbol}`}
                     className="w-full h-24 object-cover rounded-lg"

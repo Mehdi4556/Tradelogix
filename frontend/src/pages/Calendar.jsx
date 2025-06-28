@@ -5,6 +5,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { FiCalendar, FiTrendingUp, FiTrendingDown, FiDollarSign, FiEye } from 'react-icons/fi';
+import { API_BASE_URL } from '../config/api';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import Navigation from '@/components/Navigation';
@@ -474,10 +475,10 @@ export default function Calendar() {
                               Screenshot attached
                             </div>
                             <img 
-                              src={`http://localhost:5000${trade.image}`} 
+                              src={`${API_BASE_URL}${trade.image}`} 
                               alt={`${trade.symbol} trade`}
                               className="w-full max-w-sm h-32 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
-                              onClick={() => window.open(`http://localhost:5000${trade.image}`, '_blank')}
+                              onClick={() => window.open(`${API_BASE_URL}${trade.image}`, '_blank')}
                             />
                           </div>
                         )}

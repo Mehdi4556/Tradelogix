@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FiX, FiCalendar, FiDollarSign, FiTrendingUp, FiTrendingDown, FiClock, FiTarget, FiFileText, FiMaximize2, FiMinimize2, FiTrash2, FiAlertTriangle } from 'react-icons/fi';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../config/api';
 
 const TradeModal = ({ trade, isOpen, onClose, onTradeDeleted }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -42,7 +43,7 @@ const TradeModal = ({ trade, isOpen, onClose, onTradeDeleted }) => {
 
   const handleDeleteTrade = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/trades/${trade._id}`, {
+      await axios.delete(`${API_BASE_URL}/api/trades/${trade._id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -147,7 +148,7 @@ const TradeModal = ({ trade, isOpen, onClose, onTradeDeleted }) => {
                       <img
                         src={trade.image?.startsWith('http') 
                           ? trade.image 
-                          : `http://localhost:5000${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
+                          : `${API_BASE_URL}${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
                         }
                         alt={`Trade ${trade.symbol}`}
                         className={`max-w-full max-h-full object-contain rounded-lg shadow-xl transition-all duration-500 hover:scale-105 ${
@@ -344,7 +345,7 @@ const TradeModal = ({ trade, isOpen, onClose, onTradeDeleted }) => {
             <img
               src={trade.image?.startsWith('http') 
                 ? trade.image 
-                : `http://localhost:5000${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
+                : `${API_BASE_URL}${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
               }
               alt={`Trade ${trade.symbol} - Full Size`}
               className="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-300"
