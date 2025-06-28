@@ -78,6 +78,34 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Database connection test route
+app.get('/api/db-test', async (req, res) => {
+  try {
+    const dbState = mongoose.connection.readyState;
+    const states = {
+      0: 'disconnected',
+      1: 'connected', 
+      2: 'connecting',
+      3: 'disconnecting'
+    };
+    
+    res.status(200).json({
+      status: 'success',
+      message: 'Database connection test',
+      mongodb_uri: process.env.MONGODB_URI ? 'Set' : 'Not set',
+      connection_state: states[dbState],
+      connection_host: mongoose.connection.host || 'Not connected',
+      connection_name: mongoose.connection.name || 'Not connected'
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Database connection test failed',
+      error: error.message
+    });
+  }
+});
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/trades', tradeRoutes);
