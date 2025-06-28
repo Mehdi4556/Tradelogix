@@ -1,0 +1,39 @@
+{
+  "name": "tradelogix",
+  "version": "1.0.0",
+  "description": "Trading Journal App - Full Stack Monorepo",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "build": "npm run build --workspace=frontend",
+    "start": "npm run start --workspace=backend",
+    "install:all": "npm install",
+    "clean": "npm run clean --workspace=frontend && npm run clean --workspace=backend",
+    "lint": "npm run lint --workspace=frontend",
+    "test": "npm run test --workspace=backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "trading",
+    "journal",
+    "react",
+    "nodejs",
+    "mongodb",
+    "shadcn",
+    "tailwind"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+} 
