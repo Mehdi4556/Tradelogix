@@ -1,18 +1,13 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "backend/server.js",
-      "use": "@vercel/node",
-      "config": {
-        "buildCommand": "cd backend && npm run build"
-      }
+  "functions": {
+    "backend/server.js": {
+      "maxDuration": 30
     }
-  ],
-  "routes": [
+  },
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "/backend/server.js"
+      "source": "/(.*)",
+      "destination": "/backend/server.js"
     }
   ]
 } 
