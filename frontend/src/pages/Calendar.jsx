@@ -6,7 +6,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { FiCalendar, FiTrendingUp, FiTrendingDown, FiDollarSign, FiEye } from 'react-icons/fi';
 
-
+import { Skeleton } from '@/components/ui/skeleton';
 import Navigation from '@/components/Navigation';
 
 export default function Calendar() {
@@ -134,13 +134,84 @@ export default function Calendar() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-white text-lg">Loading calendar...</div>
+      <>
+        <Navigation />
+        <div className="min-h-screen bg-black pt-24 p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* Header Skeleton */}
+            <div className="mb-8 animate-in fade-in-0 slide-in-from-top-4 duration-500">
+              <div className="flex items-center space-x-3 mb-4">
+                <Skeleton className="w-8 h-8 bg-gray-800 rounded" />
+                <Skeleton className="h-8 w-48 bg-gray-800" />
+              </div>
+              <Skeleton className="h-4 w-96 bg-gray-800" />
+            </div>
+
+            {/* Legend Skeleton */}
+            <div className="bg-gray-900 rounded-lg border border-gray-800 p-6 mb-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center gap-2 mb-4">
+                <Skeleton className="h-5 w-5 bg-gray-800 rounded" />
+                <Skeleton className="h-5 w-32 bg-gray-800" />
+              </div>
+              <div className="flex flex-wrap gap-6">
+                {[...Array(3)].map((_, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Skeleton className="w-3 h-3 bg-gray-800 rounded" />
+                    <Skeleton className="h-4 w-20 bg-gray-800" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Calendar Skeleton */}
+            <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden animate-in fade-in-0 slide-in-from-bottom-4 duration-500 delay-100">
+              <div className="p-6 border-b border-gray-800">
+                <Skeleton className="h-6 w-32 bg-gray-800 mb-2" />
+                <Skeleton className="h-4 w-64 bg-gray-800" />
+              </div>
+              <div className="p-6">
+                {/* Calendar Header Skeleton */}
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex gap-2">
+                    <Skeleton className="h-9 w-16 bg-gray-800" />
+                    <Skeleton className="h-9 w-16 bg-gray-800" />
+                    <Skeleton className="h-9 w-16 bg-gray-800" />
+                  </div>
+                  <Skeleton className="h-8 w-32 bg-gray-800" />
+                </div>
+
+                {/* Calendar Grid Skeleton */}
+                <div className="space-y-2">
+                  {/* Weekday headers */}
+                  <div className="grid grid-cols-7 gap-2 mb-2">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                      <div key={day} className="p-2 text-center">
+                        <Skeleton className="h-4 w-8 bg-gray-800 mx-auto" />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Calendar days */}
+                  {[...Array(6)].map((_, weekIndex) => (
+                    <div key={weekIndex} className="grid grid-cols-7 gap-2">
+                      {[...Array(7)].map((_, dayIndex) => (
+                        <div key={dayIndex} className="h-16 border border-gray-700 rounded">
+                          <div className="p-2">
+                            <Skeleton className="h-3 w-4 bg-gray-800 mb-1" />
+                            {Math.random() > 0.7 && (
+                              <Skeleton className="h-2 w-full bg-gray-700" />
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
