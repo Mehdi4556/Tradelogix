@@ -344,7 +344,9 @@ const Gallery = () => {
                         <img
                           src={trade.image?.startsWith('http') 
                             ? trade.image 
-                            : `${API_BASE_URL}${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
+                            : trade.image?.startsWith('/uploads') 
+                              ? `http://localhost:5000${trade.image}`
+                              : `${API_BASE_URL}${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
                           }
                           alt={`Trade ${trade.symbol}`}
                           className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
@@ -510,7 +512,9 @@ const Gallery = () => {
                   <img
                     src={deleteConfirm.image?.startsWith('http') 
                       ? deleteConfirm.image 
-                      : `${API_BASE_URL}${deleteConfirm.image?.startsWith('/') ? deleteConfirm.image : `/uploads/trades/${deleteConfirm.image}`}`
+                      : deleteConfirm.image?.startsWith('/uploads') 
+                        ? `http://localhost:5000${deleteConfirm.image}`
+                        : `${API_BASE_URL}${deleteConfirm.image?.startsWith('/') ? deleteConfirm.image : `/uploads/trades/${deleteConfirm.image}`}`
                     }
                     alt={`Trade ${deleteConfirm.symbol}`}
                     className="w-full h-24 object-cover rounded-lg"

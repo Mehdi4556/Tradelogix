@@ -475,10 +475,19 @@ export default function Calendar() {
                               Screenshot attached
                             </div>
                             <img 
-                              src={`${API_BASE_URL}${trade.image}`} 
+                              src={trade.image?.startsWith('http') 
+                                ? trade.image 
+                                : trade.image?.startsWith('/uploads') 
+                                  ? `http://localhost:5000${trade.image}`
+                                  : `${API_BASE_URL}${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
+                              }
                               alt={`${trade.symbol} trade`}
                               className="w-full max-w-sm h-32 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
-                              onClick={() => window.open(`${API_BASE_URL}${trade.image}`, '_blank')}
+                              onClick={() => window.open(trade.image?.startsWith('http') 
+                                ? trade.image 
+                                : trade.image?.startsWith('/uploads') 
+                                  ? `http://localhost:5000${trade.image}`
+                                  : `${API_BASE_URL}${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`, '_blank')}
                             />
                           </div>
                         )}

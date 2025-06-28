@@ -148,7 +148,9 @@ const TradeModal = ({ trade, isOpen, onClose, onTradeDeleted }) => {
                       <img
                         src={trade.image?.startsWith('http') 
                           ? trade.image 
-                          : `${API_BASE_URL}${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
+                          : trade.image?.startsWith('/uploads') 
+                            ? `http://localhost:5000${trade.image}`
+                            : `${API_BASE_URL}${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
                         }
                         alt={`Trade ${trade.symbol}`}
                         className={`max-w-full max-h-full object-contain rounded-lg shadow-xl transition-all duration-500 hover:scale-105 ${
@@ -345,7 +347,9 @@ const TradeModal = ({ trade, isOpen, onClose, onTradeDeleted }) => {
             <img
               src={trade.image?.startsWith('http') 
                 ? trade.image 
-                : `${API_BASE_URL}${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
+                : trade.image?.startsWith('/uploads') 
+                  ? `http://localhost:5000${trade.image}`
+                  : `${API_BASE_URL}${trade.image?.startsWith('/') ? trade.image : `/uploads/trades/${trade.image}`}`
               }
               alt={`Trade ${trade.symbol} - Full Size`}
               className="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-300"
