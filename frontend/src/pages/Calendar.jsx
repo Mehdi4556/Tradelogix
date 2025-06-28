@@ -23,7 +23,7 @@ export default function Calendar() {
 
   const fetchTrades = async () => {
     try {
-      const response = await axios.get('/api/trades');
+      const response = await axios.get('/trades');
       setTrades(response.data.data.trades);
     } catch (error) {
       toast.error('Failed to fetch trades');

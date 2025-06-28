@@ -43,7 +43,7 @@ const TradeModal = ({ trade, isOpen, onClose, onTradeDeleted }) => {
 
   const handleDeleteTrade = async () => {
     try {
-      await axios.delete(`${API_BASE_URL}/api/trades/${trade._id}`, {
+      await axios.delete(`${API_BASE_URL}/trades/${trade._id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

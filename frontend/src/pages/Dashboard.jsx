@@ -43,7 +43,7 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/api/trades`, {
+      const response = await axios.get(`${API_BASE_URL}/trades`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -103,7 +103,7 @@ const Dashboard = () => {
 
   const handleDeleteTrade = async (tradeId) => {
     try {
-      await axios.delete(`${API_BASE_URL}/api/trades/${tradeId}`, {
+      await axios.delete(`${API_BASE_URL}/trades/${tradeId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

@@ -84,7 +84,7 @@ export default function AddTrade() {
         formData.append('image', imageFile);
       }
 
-      const response = await axios.post(`${API_BASE_URL}/api/trades`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/trades`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${localStorage.getItem('token')}`

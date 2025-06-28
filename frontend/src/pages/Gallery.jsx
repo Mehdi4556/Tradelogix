@@ -33,7 +33,7 @@ const Gallery = () => {
   const fetchTrades = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/api/trades`, {
+      const response = await axios.get(`${API_BASE_URL}/trades`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -148,7 +148,7 @@ const Gallery = () => {
 
   const handleDeleteTrade = async (tradeId) => {
     try {
-      await axios.delete(`${API_BASE_URL}/api/trades/${tradeId}`, {
+      await axios.delete(`${API_BASE_URL}/trades/${tradeId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

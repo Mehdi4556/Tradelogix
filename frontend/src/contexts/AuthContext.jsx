@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get('/api/auth/me');
+      const response = await axios.get('/auth/me');
       console.log('User data from API:', response.data.data.user);
       setUser(response.data.data.user);
     } catch (error) {
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('/api/auth/login', { email, password });
+      const response = await axios.post('/auth/login', { email, password });
       const { token: newToken, data } = response.data;
       
       localStorage.setItem('token', newToken);
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || firstName; // Use firstName as lastName if no last name provided
       
-      const response = await axios.post('/api/auth/register', { 
+      const response = await axios.post('/auth/register', { 
         username: name,
         firstName,
         lastName,
