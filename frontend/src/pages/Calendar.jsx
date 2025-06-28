@@ -139,7 +139,7 @@ export default function Calendar() {
         <div className="min-h-screen bg-black pt-24 p-6">
           <div className="max-w-7xl mx-auto">
             {/* Header Skeleton */}
-            <div className="mb-8 animate-in fade-in-0 slide-in-from-top-4 duration-500">
+            <div className="mb-8 animate-in fade-in-0 slide-in-from-top-4 duration-300">
               <div className="flex items-center space-x-3 mb-4">
                 <Skeleton className="w-8 h-8 bg-gray-800 rounded" />
                 <Skeleton className="h-8 w-48 bg-gray-800" />
@@ -148,7 +148,7 @@ export default function Calendar() {
             </div>
 
             {/* Legend Skeleton */}
-            <div className="bg-gray-900 rounded-lg border border-gray-800 p-6 mb-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
+            <div className="bg-gray-900 rounded-lg border border-gray-800 p-6 mb-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-300">
               <div className="flex items-center gap-2 mb-4">
                 <Skeleton className="h-5 w-5 bg-gray-800 rounded" />
                 <Skeleton className="h-5 w-32 bg-gray-800" />
@@ -164,7 +164,7 @@ export default function Calendar() {
             </div>
 
             {/* Calendar Skeleton */}
-            <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden animate-in fade-in-0 slide-in-from-bottom-4 duration-500 delay-100">
+            <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden animate-in fade-in-0 slide-in-from-bottom-4 duration-300 delay-50">
               <div className="p-6 border-b border-gray-800">
                 <Skeleton className="h-6 w-32 bg-gray-800 mb-2" />
                 <Skeleton className="h-4 w-64 bg-gray-800" />
@@ -220,7 +220,7 @@ export default function Calendar() {
       <Navigation />
       <div className="min-h-screen bg-black pt-24 p-6">
         <div className="max-w-7xl mx-auto">
-        <div className="mb-8 animate-in fade-in-0 slide-in-from-top-4 duration-500">
+        <div className="mb-8 animate-in fade-in-0 slide-in-from-top-4 duration-300">
           <div className="flex items-center space-x-3 mb-4">
             <FiCalendar className="w-8 h-8 text-blue-500" />
             <h1 className="text-3xl font-bold font-heading">Trading Calendar</h1>
@@ -231,7 +231,7 @@ export default function Calendar() {
         </div>
 
         {/* Calendar Legend */}
-        <div className="bg-gray-900 rounded-lg border border-gray-800 p-6 mb-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
+        <div className="bg-gray-900 rounded-lg border border-gray-800 p-6 mb-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-300">
           <div className="flex items-center gap-2 mb-4">
             <FiCalendar className="h-5 w-5 text-blue-500" />
             <h2 className="text-lg font-semibold text-white">Calendar Legend</h2>
@@ -253,7 +253,7 @@ export default function Calendar() {
         </div>
 
         {/* Trading Calendar */}
-        <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden animate-in fade-in-0 slide-in-from-bottom-4 duration-500 delay-100">
+        <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden animate-in fade-in-0 slide-in-from-bottom-4 duration-300 delay-50">
           <div className="p-6 border-b border-gray-800">
             <h2 className="text-xl font-semibold text-white">Monthly View</h2>
             <p className="text-gray-400 text-sm mt-1">Click on any day to view trade details</p>

@@ -12,6 +12,7 @@ import {
   FiAlertTriangle
 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Skeleton } from '../components/ui/skeleton';
@@ -205,7 +206,7 @@ const Dashboard = () => {
       <div className="min-h-screen bg-black text-white pt-24 p-6">
         <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8 animate-in fade-in-0 slide-in-from-top-4 duration-500">
+        <div className="mb-8 animate-in fade-in-0 slide-in-from-top-4 duration-300">
           {/* Welcome Message */}
           <div className="mb-6">
             <h1 className="text-4xl font-bold font-heading text-white mb-2">
@@ -230,17 +231,70 @@ const Dashboard = () => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300 animate-in fade-in-0 slide-in-from-bottom-4 duration-500 delay-100">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8"
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+                          transition: {
+              staggerChildren: 0.05
+            }
+            }
+          }}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.div 
+            className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300"
+            variants={{
+              hidden: { opacity: 0, y: 20, scale: 0.95 },
+              show: { 
+                opacity: 1, 
+                y: 0, 
+                scale: 1,
+                transition: {
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25
+                }
+              }
+            }}
+            whileHover={{ 
+              scale: 1.02,
+              y: -2,
+              transition: { duration: 0.2 }
+            }}
+          >
             <div className="flex items-center justify-between mb-3">
               <FiUsers className="w-5 h-5 text-gray-400" />
               <span className="text-xs text-gray-500">TOTAL</span>
             </div>
             <div className="text-2xl font-bold text-white mb-1">{stats.totalTrades}</div>
             <div className="text-xs text-gray-400">Trades</div>
-          </div>
+          </motion.div>
 
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300 animate-in fade-in-0 slide-in-from-bottom-4 duration-500 delay-150">
+          <motion.div 
+            className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300"
+            variants={{
+              hidden: { opacity: 0, y: 20, scale: 0.95 },
+              show: { 
+                opacity: 1, 
+                y: 0, 
+                scale: 1,
+                transition: {
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25
+                }
+              }
+            }}
+            whileHover={{ 
+              scale: 1.02,
+              y: -2,
+              transition: { duration: 0.2 }
+            }}
+          >
             <div className="flex items-center justify-between mb-3">
               <FiDollarSign className="w-5 h-5 text-gray-400" />
               <span className="text-xs text-gray-500">P&L</span>
@@ -251,18 +305,58 @@ const Dashboard = () => {
             <div className="text-xs text-gray-400">
               {stats.totalPnL >= 0 ? 'Profit' : 'Loss'}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300 animate-in fade-in-0 slide-in-from-bottom-4 duration-500 delay-200">
+          <motion.div 
+            className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300"
+            variants={{
+              hidden: { opacity: 0, y: 20, scale: 0.95 },
+              show: { 
+                opacity: 1, 
+                y: 0, 
+                scale: 1,
+                transition: {
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25
+                }
+              }
+            }}
+            whileHover={{ 
+              scale: 1.02,
+              y: -2,
+              transition: { duration: 0.2 }
+            }}
+          >
             <div className="flex items-center justify-between mb-3">
               <FiTrendingUp className="w-5 h-5 text-gray-400" />
               <span className="text-xs text-gray-500">WIN RATE</span>
             </div>
             <div className="text-2xl font-bold text-white mb-1">{stats.winRate.toFixed(1)}%</div>
             <div className="text-xs text-gray-400">Success Rate</div>
-          </div>
+          </motion.div>
 
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300 animate-in fade-in-0 slide-in-from-bottom-4 duration-500 delay-250">
+          <motion.div 
+            className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300"
+            variants={{
+              hidden: { opacity: 0, y: 20, scale: 0.95 },
+              show: { 
+                opacity: 1, 
+                y: 0, 
+                scale: 1,
+                transition: {
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25
+                }
+              }
+            }}
+            whileHover={{ 
+              scale: 1.02,
+              y: -2,
+              transition: { duration: 0.2 }
+            }}
+          >
             <div className="flex items-center justify-between mb-3">
               <FiTrendingUp className="w-5 h-5 text-gray-400" />
               <span className="text-xs text-gray-500">BEST</span>
@@ -271,9 +365,29 @@ const Dashboard = () => {
               ${stats.bestTrade.toFixed(2)}
             </div>
             <div className="text-xs text-gray-400">Best Trade</div>
-          </div>
+          </motion.div>
 
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300 animate-in fade-in-0 slide-in-from-bottom-4 duration-500 delay-300">
+          <motion.div 
+            className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300"
+            variants={{
+              hidden: { opacity: 0, y: 20, scale: 0.95 },
+              show: { 
+                opacity: 1, 
+                y: 0, 
+                scale: 1,
+                transition: {
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25
+                }
+              }
+            }}
+            whileHover={{ 
+              scale: 1.02,
+              y: -2,
+              transition: { duration: 0.2 }
+            }}
+          >
             <div className="flex items-center justify-between mb-3">
               <FiTrendingDown className="w-5 h-5 text-gray-400" />
               <span className="text-xs text-gray-500">WORST</span>
@@ -282,8 +396,8 @@ const Dashboard = () => {
               ${Math.abs(stats.worstTrade).toFixed(2)}
             </div>
             <div className="text-xs text-gray-400">Worst Trade</div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
