@@ -69,13 +69,18 @@ export const AuthProvider = ({ children }) => {
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || firstName; // Use firstName as lastName if no last name provided
       
-      const response = await axios.post('/auth/register', { 
+      const payload = { 
         username: name,
         firstName,
         lastName,
         email, 
         password 
-      });
+      };
+      
+      console.log('🚀 Signup payload:', payload);
+      console.log('📡 API URL:', `${API_BASE_URL}/auth/register`);
+      
+      const response = await axios.post('/auth/register', payload);
       const { token: newToken, data } = response.data;
       
       localStorage.setItem('token', newToken);
@@ -85,9 +90,13 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
+      console.error('❌ Signup error:', error);
+      console.error('📋 Error response:', error.response?.data);
+      console.error('🔍 Error status:', error.response?.status);
+      
       return { 
         success: false, 
-        error: error.response?.data?.message || 'Signup failed' 
+        error: error.response?.data?.message || `Signup failed (${error.response?.status || 'Unknown'})` 
       };
     }
   };
