@@ -95,8 +95,8 @@ const connectDB = async () => {
     console.log('   3. Check username/password in connection string');
     console.log('   4. Ensure database name is correct');
     
-    // Don't exit in production, let it retry
-    if (process.env.NODE_ENV !== 'production') {
+    // Don't exit or throw in production serverless environment
+    if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
       process.exit(1);
     }
   }
@@ -133,34 +133,21 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Database connection check middleware
-app.use(async (req, res, next) => {
+// Database connection check middleware (simplified for serverless)
+app.use((req, res, next) => {
   // Skip connection check for static routes and health checks
-  if (req.path === '/api/health' || req.path === '/api/hello' || req.path === '/api/env-check') {
+  if (req.path === '/api/health' || req.path === '/api/hello' || req.path === '/api/env-check' || req.path === '/api/deployment-info') {
     return next();
   }
   
-  try {
-    // Check if database is connected
-    if (mongoose.connection.readyState !== 1) {
-      console.log('🔄 Database not connected, attempting to reconnect...');
-      await connectDB();
-    }
-    
-    // Verify connection with a simple ping
-    if (mongoose.connection.readyState === 1) {
-      await mongoose.connection.db.admin().ping();
-    }
-    
-    next();
-  } catch (error) {
-    console.error('❌ Database connection check failed:', error.message);
-    return res.status(500).json({
-      status: 'error',
-      message: 'Database connection unavailable. Please try again.',
-      ...(process.env.NODE_ENV === 'development' && { error: error.message })
-    });
+  // For other routes, check connection state but don't block
+  if (mongoose.connection.readyState !== 1) {
+    console.log('⚠️  Database not connected for request:', req.path);
+    // Try to reconnect asynchronously without blocking
+    connectDB().catch(err => console.error('Background reconnect failed:', err.message));
   }
+  
+  next();
 });
 
 // Sample hello route for testing
@@ -200,7 +187,11 @@ app.get('/api/db-test', async (req, res) => {
     if (dbState !== 1) {
       console.log('🔄 Attempting to connect for db-test...');
       reconnectAttempt = true;
-      await connectDB();
+      try {
+        await connectDB();
+      } catch (connectError) {
+        console.error('Failed to connect during db-test:', connectError.message);
+      }
     }
     
     // Try to ping the database
