@@ -4,56 +4,128 @@ const catchAsync = require('../utils/catchAsync');
 
 // Helper function to create and send JWT token
 const signToken = (id) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is not set');
+  }
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || '7d'
   });
 };
 
 const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
-  
-  // Remove password from output
-  user.password = undefined;
+  try {
+    const token = signToken(user._id);
+    
+    // Remove password from output
+    user.password = undefined;
 
-  res.status(statusCode).json({
-    status: 'success',
-    token,
-    data: {
-      user
-    }
-  });
+    res.status(statusCode).json({
+      status: 'success',
+      token,
+      data: {
+        user
+      }
+    });
+  } catch (error) {
+    console.error('Error creating token:', error.message);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Authentication system error. Please contact support.'
+    });
+  }
 };
 
 // Register new user
 exports.register = catchAsync(async (req, res, next) => {
-  const { username, email, password, firstName, lastName, tradingExperience, preferredCurrency } = req.body;
+  try {
+    // Validate environment variables
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET environment variable is not set');
+      return res.status(500).json({
+        status: 'error',
+        message: 'Server configuration error. Please contact support.'
+      });
+    }
 
-  // Check if user already exists
-  const existingUser = await User.findOne({
-    $or: [{ email }, { username }]
-  });
+    if (!process.env.MONGODB_URI) {
+      console.error('MONGODB_URI environment variable is not set');
+      return res.status(500).json({
+        status: 'error',
+        message: 'Database configuration error. Please contact support.'
+      });
+    }
 
-  if (existingUser) {
-    return res.status(400).json({
+    const { username, email, password, firstName, lastName, tradingExperience, preferredCurrency } = req.body;
+
+    // Validate required fields
+    if (!username || !email || !password || !firstName || !lastName) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Please provide all required fields: username, email, password, firstName, lastName'
+      });
+    }
+
+    console.log('Attempting to register user:', { username, email, firstName, lastName });
+
+    // Check if user already exists
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }]
+    });
+
+    if (existingUser) {
+      console.log('User already exists:', existingUser.email === email ? 'email' : 'username');
+      return res.status(400).json({
+        status: 'error',
+        message: existingUser.email === email 
+          ? 'User with this email already exists' 
+          : 'Username already taken'
+      });
+    }
+
+    console.log('Creating new user...');
+
+    // Create new user
+    const newUser = await User.create({
+      username,
+      email,
+      password,
+      firstName,
+      lastName,
+      tradingExperience: tradingExperience || 'beginner',
+      preferredCurrency: preferredCurrency || 'USD'
+    });
+
+    console.log('User created successfully:', newUser._id);
+
+    createSendToken(newUser, 201, res);
+  } catch (error) {
+    console.error('Registration error:', error);
+    
+    // Handle specific MongoDB errors
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      return res.status(400).json({
+        status: 'error',
+        message: `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`
+      });
+    }
+
+    // Handle validation errors
+    if (error.name === 'ValidationError') {
+      const message = Object.values(error.errors).map(val => val.message).join(', ');
+      return res.status(400).json({
+        status: 'error',
+        message
+      });
+    }
+
+    // Generic error response
+    return res.status(500).json({
       status: 'error',
-      message: existingUser.email === email 
-        ? 'User with this email already exists' 
-        : 'Username already taken'
+      message: 'Registration failed. Please try again.',
+      ...(process.env.NODE_ENV === 'development' && { error: error.message })
     });
   }
-
-  // Create new user
-  const newUser = await User.create({
-    username,
-    email,
-    password,
-    firstName,
-    lastName,
-    tradingExperience: tradingExperience || 'beginner',
-    preferredCurrency: preferredCurrency || 'USD'
-  });
-
-  createSendToken(newUser, 201, res);
 });
 
 // User login

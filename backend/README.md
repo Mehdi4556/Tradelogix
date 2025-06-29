@@ -58,6 +58,23 @@ A robust and scalable backend for the Trading Journal App built with Node.js, Ex
    CLIENT_URL=http://localhost:3000
    ```
 
+   **⚠️ CRITICAL for Vercel Deployment:**
+   - `MONGODB_URI` - Your MongoDB Atlas connection string
+   - `JWT_SECRET` - A long, secure secret key for JWT tokens
+
+   **For Vercel Environment Variables:**
+   1. Go to your Vercel dashboard
+   2. Select your backend project
+   3. Go to Settings → Environment Variables
+   4. Add the required variables listed above
+
+   **Troubleshooting 500 Errors:**
+   If you get 500 errors on `/api/auth/register`, check:
+   1. Environment variables are properly set in Vercel
+   2. MongoDB Atlas connection string is correct
+   3. Your IP is whitelisted in MongoDB Atlas
+   4. JWT_SECRET is set and not empty
+
 4. **Start the server**
    ```bash
    # Development mode

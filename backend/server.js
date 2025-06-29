@@ -4,6 +4,33 @@ const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
 
+// Validate critical environment variables
+const validateEnvironmentVariables = () => {
+  const requiredVars = ['MONGODB_URI', 'JWT_SECRET'];
+  const missingVars = requiredVars.filter(varName => !process.env[varName]);
+  
+  if (missingVars.length > 0) {
+    console.error('❌ Missing required environment variables:');
+    missingVars.forEach(varName => {
+      console.error(`   - ${varName}`);
+    });
+    console.error('💡 Please set these variables in your Vercel dashboard or .env file');
+    
+    // In production, we should still try to run but log the error
+    if (process.env.NODE_ENV === 'production') {
+      console.error('⚠️  Server starting anyway in production mode, but functionality may be limited');
+    } else {
+      console.error('🛑 Server cannot start without these variables in development mode');
+      process.exit(1);
+    }
+  } else {
+    console.log('✅ All required environment variables are set');
+  }
+};
+
+// Validate environment variables
+validateEnvironmentVariables();
+
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const tradeRoutes = require('./routes/tradeRoutes');
@@ -97,6 +124,50 @@ app.get('/api/db-test', async (req, res) => {
       error: error.message
     });
   }
+});
+
+// Environment variables check route
+app.get('/api/env-check', (req, res) => {
+  const requiredVars = ['MONGODB_URI', 'JWT_SECRET'];
+  const optionalVars = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
+  
+  const envStatus = {
+    status: 'success',
+    message: 'Environment variables check',
+    timestamp: new Date().toISOString(),
+    required: {},
+    optional: {},
+    summary: {
+      required_missing: [],
+      optional_missing: []
+    }
+  };
+
+  // Check required variables
+  requiredVars.forEach(varName => {
+    const isSet = !!process.env[varName];
+    envStatus.required[varName] = isSet ? 'Set' : 'Missing';
+    if (!isSet) {
+      envStatus.summary.required_missing.push(varName);
+    }
+  });
+
+  // Check optional variables
+  optionalVars.forEach(varName => {
+    const isSet = !!process.env[varName];
+    envStatus.optional[varName] = isSet ? 'Set' : 'Missing';
+    if (!isSet) {
+      envStatus.summary.optional_missing.push(varName);
+    }
+  });
+
+  // Set status based on missing required variables
+  if (envStatus.summary.required_missing.length > 0) {
+    envStatus.status = 'error';
+    envStatus.message = `Missing required environment variables: ${envStatus.summary.required_missing.join(', ')}`;
+  }
+
+  res.status(envStatus.summary.required_missing.length > 0 ? 500 : 200).json(envStatus);
 });
 
 // API Routes
