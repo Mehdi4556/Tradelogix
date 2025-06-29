@@ -67,6 +67,16 @@ exports.register = catchAsync(async (req, res, next) => {
 
     console.log('Attempting to register user:', { username, email, firstName, lastName });
 
+    // Check database connection
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      console.error('Database not connected, state:', mongoose.connection.readyState);
+      return res.status(500).json({
+        status: 'error',
+        message: 'Database connection unavailable. Please try again in a moment.'
+      });
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({
       $or: [{ email }, { username }]
@@ -116,6 +126,16 @@ exports.register = catchAsync(async (req, res, next) => {
       return res.status(400).json({
         status: 'error',
         message
+      });
+    }
+
+    // Handle MongoDB connection errors
+    if (error.name === 'MongooseError' || error.name === 'MongoError' || error.message.includes('connection')) {
+      console.error('Database connection issue during registration:', error.message);
+      return res.status(500).json({
+        status: 'error',
+        message: 'Database connection error. Please try again in a moment.',
+        ...(process.env.NODE_ENV === 'development' && { error: error.message })
       });
     }
 
