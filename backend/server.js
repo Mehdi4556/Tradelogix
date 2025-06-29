@@ -61,69 +61,15 @@ app.options('*', cors(corsOptions));
 
 // Database connection
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/tradelogix';
-
-// Configure mongoose for serverless environments
-if (process.env.NODE_ENV === 'production') {
-  mongoose.set('bufferCommands', false);
-  mongoose.set('bufferMaxEntries', 0);
-}
-
-// Connect to MongoDB with better error handling
-const connectDB = async () => {
-  try {
-    if (mongoose.connection.readyState === 0) {
-      console.log('🔄 Connecting to MongoDB...');
-      await mongoose.connect(mongoURI, {
-        // Optimized settings for serverless
-        maxPoolSize: 10,
-        serverSelectionTimeoutMS: 5000,
-        socketTimeoutMS: 45000,
-        bufferCommands: false,
-        bufferMaxEntries: 0
-      });
-      console.log('📊 Connected to MongoDB Atlas/Local');
-    } else if (mongoose.connection.readyState === 1) {
-      console.log('✅ MongoDB already connected');
-    } else {
-      console.log('⚠️  MongoDB connection state:', mongoose.connection.readyState);
-    }
-  } catch (err) {
+mongoose.connect(mongoURI)
+  .then(() => console.log('📊 Connected to MongoDB Atlas/Local'))
+  .catch((err) => {
     console.error('❌ MongoDB connection error:', err.message);
-    console.log('💡 Troubleshooting steps:');
-    console.log('   1. Check MONGODB_URI environment variable');
-    console.log('   2. Verify MongoDB Atlas IP whitelist (use 0.0.0.0/0 for Vercel)');
-    console.log('   3. Check username/password in connection string');
-    console.log('   4. Ensure database name is correct');
-    
-    // Don't exit or throw in production serverless environment
-    if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-      process.exit(1);
-    }
-  }
-};
-
-// Initialize database connection
-connectDB();
-
-// Handle MongoDB connection events
-mongoose.connection.on('connected', () => {
-  console.log('✅ Mongoose connected to MongoDB');
-});
-
-mongoose.connection.on('error', (err) => {
-  console.error('❌ MongoDB connection error:', err);
-});
-
-mongoose.connection.on('disconnected', () => {
-  console.log('⚠️  MongoDB disconnected');
-});
-
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  await mongoose.connection.close();
-  console.log('📊 MongoDB connection closed through app termination');
-  process.exit(0);
-});
+    console.log('💡 If using Atlas, make sure to:');
+    console.log('   1. Set MONGODB_URI in .env file');
+    console.log('   2. Whitelist your IP address in Atlas');
+    console.log('   3. Check username/password are correct');
+  });
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -133,22 +79,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Database connection check middleware (simplified for serverless)
-app.use((req, res, next) => {
-  // Skip connection check for static routes and health checks
-  if (req.path === '/api/health' || req.path === '/api/hello' || req.path === '/api/env-check' || req.path === '/api/deployment-info') {
-    return next();
-  }
-  
-  // For other routes, check connection state but don't block
-  if (mongoose.connection.readyState !== 1) {
-    console.log('⚠️  Database not connected for request:', req.path);
-    // Try to reconnect asynchronously without blocking
-    connectDB().catch(err => console.error('Background reconnect failed:', err.message));
-  }
-  
-  next();
-});
+
 
 // Sample hello route for testing
 app.get('/api/hello', (req, res) => {
@@ -180,43 +111,13 @@ app.get('/api/db-test', async (req, res) => {
       3: 'disconnecting'
     };
     
-    let pingResult = null;
-    let reconnectAttempt = false;
-    
-    // If not connected, try to connect
-    if (dbState !== 1) {
-      console.log('🔄 Attempting to connect for db-test...');
-      reconnectAttempt = true;
-      try {
-        await connectDB();
-      } catch (connectError) {
-        console.error('Failed to connect during db-test:', connectError.message);
-      }
-    }
-    
-    // Try to ping the database
-    if (mongoose.connection.readyState === 1) {
-      try {
-        await mongoose.connection.db.admin().ping();
-        pingResult = 'success';
-      } catch (pingError) {
-        pingResult = `failed: ${pingError.message}`;
-      }
-    }
-    
-    const currentState = mongoose.connection.readyState;
-    
-    res.status(currentState === 1 ? 200 : 500).json({
-      status: currentState === 1 ? 'success' : 'error',
+    res.status(200).json({
+      status: 'success',
       message: 'Database connection test',
       mongodb_uri: process.env.MONGODB_URI ? 'Set' : 'Not set',
-      initial_connection_state: states[dbState],
-      current_connection_state: states[currentState],
+      connection_state: states[dbState],
       connection_host: mongoose.connection.host || 'Not connected',
-      connection_name: mongoose.connection.name || 'Not connected',
-      ping_result: pingResult,
-      reconnect_attempted: reconnectAttempt,
-      timestamp: new Date().toISOString()
+      connection_name: mongoose.connection.name || 'Not connected'
     });
   } catch (error) {
     res.status(500).json({
