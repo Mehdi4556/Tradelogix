@@ -61,9 +61,23 @@ app.use(cors(corsOptions));
 // Handle CORS preflight requests
 app.options('*', cors(corsOptions));
 
-// Database connection
+// Database connection with improved settings for serverless
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/tradelogix';
-mongoose.connect(mongoURI)
+mongoose.connect(mongoURI, {
+  bufferCommands: false,
+  bufferMaxEntries: 0,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+  family: 4,
+  maxPoolSize: 10,
+  minPoolSize: 5,
+  maxIdleTimeMS: 30000,
+  waitQueueTimeoutMS: 5000,
+  retryWrites: true,
+  w: 'majority'
+})
   .then(() => {
     const isLocal = mongoURI.includes('localhost') || mongoURI.includes('127.0.0.1');
     const dbType = isLocal ? 'Local MongoDB' : 'MongoDB Atlas';
@@ -92,6 +106,26 @@ mongoose.connect(mongoURI)
       console.log('   4. Use MongoDB Compass to connect to Atlas for GUI management');
     }
   });
+
+// Add connection event handlers for better stability
+mongoose.connection.on('connected', () => {
+  console.log('🔗 MongoDB connected successfully');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('📴 MongoDB disconnected');
+});
+
+// Handle app termination
+process.on('SIGINT', async () => {
+  await mongoose.connection.close();
+  console.log('📴 MongoDB connection closed.');
+  process.exit(0);
+});
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
