@@ -42,6 +42,9 @@ const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 
+// Configure Mongoose settings
+mongoose.set('bufferCommands', true);
+
 // CORS configuration for Vercel deployment
 const corsOptions = {
   origin: [
@@ -61,9 +64,10 @@ app.use(cors(corsOptions));
 // Handle CORS preflight requests
 app.options('*', cors(corsOptions));
 
-// Database connection with improved settings for serverless
+// Database connection
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/tradelogix';
 mongoose.connect(mongoURI, {
+  bufferCommands: true,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
   family: 4,
