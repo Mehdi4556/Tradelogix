@@ -12,8 +12,8 @@ export const useAuth = () => {
   return context;
 };
 
-// Configure axios default base URL
-axios.defaults.baseURL = API_BASE_URL;
+// Configure axios default base URL (ensure no trailing slash)
+axios.defaults.baseURL = API_BASE_URL.replace(/\/$/, '');
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -108,11 +108,25 @@ export const AuthProvider = ({ children }) => {
     delete axios.defaults.headers.common['Authorization'];
   };
 
+  const updateProfile = async (profileData) => {
+    try {
+      const response = await axios.patch('/auth/update-me', profileData);
+      setUser(response.data.data.user);
+      return { success: true };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Failed to update profile' 
+      };
+    }
+  };
+
   const value = {
     user,
     login,
     signup,
     logout,
+    updateProfile,
     loading,
     isAuthenticated: !!user
   };

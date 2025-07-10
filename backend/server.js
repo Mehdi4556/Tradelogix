@@ -46,6 +46,8 @@ const app = express();
 const corsOptions = {
   origin: [
     process.env.FRONTEND_URL || 'https://tradelogix-frontend.vercel.app',
+    'https://tradelogix-frontend-bm3qa7dkz-mehdi4556s-projects.vercel.app', // Preview URL
+    /https:\/\/tradelogix-frontend.*\.vercel\.app$/, // Allow all Vercel preview URLs
     'http://localhost:3000', // For local development
     'http://localhost:5173'  // For Vite dev server
   ],

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FiHome, FiPlus, FiImage, FiCalendar, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
+import { FiHome, FiPlus, FiImage, FiCalendar, FiSettings, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -38,6 +38,12 @@ export default function Navigation() {
       label: 'Calendar', 
       icon: FiCalendar,
       description: 'Trading Timeline'
+    },
+    { 
+      path: '/settings', 
+      label: 'Settings', 
+      icon: FiSettings,
+      description: 'Profile & Settings'
     },
   ];
 

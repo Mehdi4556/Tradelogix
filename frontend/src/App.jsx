@@ -12,6 +12,7 @@ import Dashboard from '@/pages/Dashboard';
 import AddTrade from '@/pages/AddTrade';
 import Gallery from '@/pages/Gallery';
 import Calendar from '@/pages/Calendar';
+import Settings from '@/pages/Settings';
 
 import './App.css';
 
@@ -74,6 +75,16 @@ function AnimatedRoutes() {
             <ProtectedRoute>
               <PageTransition>
                 <Calendar />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <Settings />
               </PageTransition>
             </ProtectedRoute>
           }
