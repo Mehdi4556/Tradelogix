@@ -205,7 +205,7 @@ const Gallery = () => {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen bg-black text-white pt-20 sm:pt-24 px-4 sm:px-6">
+        <div className="min-h-screen text-white pt-24 sm:pt-32 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto">
           {/* Header Skeleton */}
           <div className="mb-8">
@@ -233,7 +233,7 @@ const Gallery = () => {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-black text-white pt-20 sm:pt-24 px-4 sm:px-6">
+      <div className="min-h-screen text-white pt-24 sm:pt-32 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 animate-in fade-in-0 slide-in-from-top-4 duration-500">

@@ -99,7 +99,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-black text-white">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
           <AnimatedRoutes />
           <Toaster
             position="top-right"
