@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../config/api';
 
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  const checkAuthStatus = async () => {
+  const checkAuthStatus = useCallback(async () => {
     try {
       const response = await axios.get('/auth/me');
       console.log('User data from API:', response.data.data.user);
@@ -41,9 +41,9 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const login = async (email, password) => {
+  const login = useCallback(async (email, password) => {
     try {
       const response = await axios.post('/auth/login', { email, password });
       const { token: newToken, data } = response.data;
@@ -60,9 +60,9 @@ export const AuthProvider = ({ children }) => {
         error: error.response?.data?.message || 'Login failed' 
       };
     }
-  };
+  }, []);
 
-  const signup = async (name, email, password) => {
+  const signup = useCallback(async (name, email, password) => {
     try {
       // Split the name into first and last name
       const nameParts = name.trim().split(' ');
@@ -99,16 +99,16 @@ export const AuthProvider = ({ children }) => {
         error: error.response?.data?.message || `Signup failed (${error.response?.status || 'Unknown'})` 
       };
     }
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];
-  };
+  }, []);
 
-  const updateProfile = async (profileData) => {
+  const updateProfile = useCallback(async (profileData) => {
     try {
       const response = await axios.patch('/auth/update-me', profileData);
       setUser(response.data.data.user);
@@ -119,9 +119,9 @@ export const AuthProvider = ({ children }) => {
         error: error.response?.data?.message || 'Failed to update profile' 
       };
     }
-  };
+  }, []);
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     login,
     signup,
@@ -129,7 +129,7 @@ export const AuthProvider = ({ children }) => {
     updateProfile,
     loading,
     isAuthenticated: !!user
-  };
+  }), [user, login, signup, logout, updateProfile, loading]);
 
   return (
     <AuthContext.Provider value={value}>

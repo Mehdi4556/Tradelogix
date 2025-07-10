@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run build:analyze",
+    "build:analyze": "vite build --mode analyze",
+    "build:production": "vite build --mode production",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "performance": "npm run build && npm run preview"
   },
   "dependencies": {
     "@fullcalendar/daygrid": "^6.1.17",

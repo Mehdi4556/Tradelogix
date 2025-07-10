@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
+const mongoConnection = require('./utils/mongoConnection');
 require('dotenv').config();
 
 // Validate critical environment variables
@@ -39,11 +40,9 @@ const uploadRoutes = require('./routes/uploadRoutes');
 
 // Import middleware
 const errorHandler = require('./middlewares/errorHandler');
+const ensureDbConnection = require('./middlewares/ensureDbConnection');
 
 const app = express();
-
-// Configure Mongoose settings
-mongoose.set('bufferCommands', true);
 
 // CORS configuration for Vercel deployment
 const corsOptions = {
@@ -64,67 +63,34 @@ app.use(cors(corsOptions));
 // Handle CORS preflight requests
 app.options('*', cors(corsOptions));
 
-// Database connection
+// Initialize MongoDB connection with enhanced serverless support
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/tradelogix';
-mongoose.connect(mongoURI, {
-  bufferCommands: true,
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
-  family: 4,
-  maxPoolSize: 10,
-  minPoolSize: 5,
-  maxIdleTimeMS: 30000,
-  waitQueueTimeoutMS: 5000,
-  retryWrites: true,
-  w: 'majority'
-})
-  .then(() => {
-    const isLocal = mongoURI.includes('localhost') || mongoURI.includes('127.0.0.1');
-    const dbType = isLocal ? 'Local MongoDB' : 'MongoDB Atlas';
-    console.log(`📊 Connected to ${dbType}`);
-    console.log(`🔗 Database: ${mongoose.connection.name}`);
-    
-    if (!isLocal) {
-      console.log('💡 Tip: Use MongoDB Compass with this connection string for GUI management');
-    }
-  })
-  .catch((err) => {
-    console.error('❌ MongoDB connection error:', err.message);
-    const isLocal = mongoURI.includes('localhost') || mongoURI.includes('127.0.0.1');
-    
-    if (isLocal) {
-      console.log('💡 For local MongoDB, make sure to:');
-      console.log('   1. Install MongoDB locally');
-      console.log('   2. Start MongoDB service (mongod)');
-      console.log('   3. Check if MongoDB is running on port 27017');
-      console.log('   4. Install MongoDB Compass for GUI management');
-    } else {
-      console.log('💡 For MongoDB Atlas, make sure to:');
-      console.log('   1. Set MONGODB_URI in .env file');
-      console.log('   2. Whitelist your IP address in Atlas (0.0.0.0/0)');
-      console.log('   3. Check username/password are correct');
-      console.log('   4. Use MongoDB Compass to connect to Atlas for GUI management');
-    }
-  });
-
-// Add connection event handlers for better stability
-mongoose.connection.on('connected', () => {
-  console.log('🔗 MongoDB connected successfully');
+mongoConnection.setupEventHandlers();
+mongoConnection.connect(mongoURI).catch(error => {
+  console.error('❌ Failed to initialize MongoDB connection:', error);
 });
 
-mongoose.connection.on('error', (err) => {
-  console.error('❌ MongoDB connection error:', err);
-});
-
-mongoose.connection.on('disconnected', () => {
-  console.log('📴 MongoDB disconnected');
-});
-
-// Handle app termination
+// Handle app termination gracefully
 process.on('SIGINT', async () => {
-  await mongoose.connection.close();
-  console.log('📴 MongoDB connection closed.');
-  process.exit(0);
+  console.log('📴 Received SIGINT, closing MongoDB connection...');
+  try {
+    await mongoConnection.disconnect();
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error during graceful shutdown:', error);
+    process.exit(1);
+  }
+});
+
+process.on('SIGTERM', async () => {
+  console.log('📴 Received SIGTERM, closing MongoDB connection...');
+  try {
+    await mongoConnection.disconnect();
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error during graceful shutdown (SIGTERM):', error);
+    process.exit(1);
+  }
 });
 
 app.use(express.json({ limit: '10mb' }));
@@ -156,24 +122,20 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Database connection test route
+// Database connection test route with enhanced diagnostics
 app.get('/api/db-test', async (req, res) => {
   try {
-    const dbState = mongoose.connection.readyState;
-    const states = {
-      0: 'disconnected',
-      1: 'connected', 
-      2: 'connecting',
-      3: 'disconnecting'
-    };
+    const connectionHealth = await mongoConnection.checkConnection();
     
-    res.status(200).json({
-      status: 'success',
+    res.status(connectionHealth.isConnected ? 200 : 500).json({
+      status: connectionHealth.isConnected ? 'success' : 'error',
       message: 'Database connection test',
       mongodb_uri: process.env.MONGODB_URI ? 'Set' : 'Not set',
-      connection_state: states[dbState],
-      connection_host: mongoose.connection.host || 'Not connected',
-      connection_name: mongoose.connection.name || 'Not connected'
+      connection_health: connectionHealth,
+      timestamp: new Date().toISOString(),
+      tips: connectionHealth.isConnected ? 
+        ['Connection is healthy', 'Database is ready for operations'] :
+        ['Check MongoDB Atlas connection', 'Verify IP whitelist (0.0.0.0/0)', 'Check connection string format']
     });
   } catch (error) {
     res.status(500).json({
@@ -261,10 +223,11 @@ app.get('/api/deployment-info', (req, res) => {
 });
 
 // API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/trades', tradeRoutes);
-app.use('/api/reports', reportRoutes);
-app.use('/api/upload', uploadRoutes);
+// Routes with database connection check
+app.use('/api/auth', ensureDbConnection, authRoutes);
+app.use('/api/trades', ensureDbConnection, tradeRoutes);
+app.use('/api/reports', ensureDbConnection, reportRoutes);
+app.use('/api/upload', ensureDbConnection, uploadRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

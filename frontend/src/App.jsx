@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AnimatePresence } from 'framer-motion';
@@ -6,15 +6,28 @@ import { AnimatePresence } from 'framer-motion';
 import { AuthProvider } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import PageTransition from '@/components/PageTransition';
-import Login from '@/pages/Login';
-import Signup from '@/pages/Signup';
-import Dashboard from '@/pages/Dashboard';
-import AddTrade from '@/pages/AddTrade';
-import Gallery from '@/pages/Gallery';
-import Calendar from '@/pages/Calendar';
-import Settings from '@/pages/Settings';
+
+// Lazy load pages for better performance
+const Login = lazy(() => import('@/pages/Login'));
+const Signup = lazy(() => import('@/pages/Signup'));
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const AddTrade = lazy(() => import('@/pages/AddTrade'));
+const Gallery = lazy(() => import('@/pages/Gallery'));
+const Calendar = lazy(() => import('@/pages/Calendar'));
+const Settings = lazy(() => import('@/pages/Settings'));
 
 import './App.css';
+
+// Loading skeleton component
+const LoadingSkeleton = () => (
+  <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+    <div className="animate-pulse">
+      <div className="w-12 h-12 bg-gray-700 rounded-full mb-4 mx-auto"></div>
+      <div className="w-32 h-4 bg-gray-700 rounded mb-2"></div>
+      <div className="w-24 h-3 bg-gray-800 rounded"></div>
+    </div>
+  </div>
+);
 
 // Animated Routes Component
 function AnimatedRoutes() {
@@ -100,7 +113,9 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
-          <AnimatedRoutes />
+          <Suspense fallback={<LoadingSkeleton />}>
+            <AnimatedRoutes />
+          </Suspense>
           <Toaster
             position="top-right"
             toastOptions={{
