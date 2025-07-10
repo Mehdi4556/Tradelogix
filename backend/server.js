@@ -64,7 +64,6 @@ app.options('*', cors(corsOptions));
 // Database connection with improved settings for serverless
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/tradelogix';
 mongoose.connect(mongoURI, {
-  bufferCommands: false,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
   family: 4,
