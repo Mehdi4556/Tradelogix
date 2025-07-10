@@ -64,13 +64,33 @@ app.options('*', cors(corsOptions));
 // Database connection
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/tradelogix';
 mongoose.connect(mongoURI)
-  .then(() => console.log('📊 Connected to MongoDB Atlas/Local'))
+  .then(() => {
+    const isLocal = mongoURI.includes('localhost') || mongoURI.includes('127.0.0.1');
+    const dbType = isLocal ? 'Local MongoDB' : 'MongoDB Atlas';
+    console.log(`📊 Connected to ${dbType}`);
+    console.log(`🔗 Database: ${mongoose.connection.name}`);
+    
+    if (!isLocal) {
+      console.log('💡 Tip: Use MongoDB Compass with this connection string for GUI management');
+    }
+  })
   .catch((err) => {
     console.error('❌ MongoDB connection error:', err.message);
-    console.log('💡 If using Atlas, make sure to:');
-    console.log('   1. Set MONGODB_URI in .env file');
-    console.log('   2. Whitelist your IP address in Atlas');
-    console.log('   3. Check username/password are correct');
+    const isLocal = mongoURI.includes('localhost') || mongoURI.includes('127.0.0.1');
+    
+    if (isLocal) {
+      console.log('💡 For local MongoDB, make sure to:');
+      console.log('   1. Install MongoDB locally');
+      console.log('   2. Start MongoDB service (mongod)');
+      console.log('   3. Check if MongoDB is running on port 27017');
+      console.log('   4. Install MongoDB Compass for GUI management');
+    } else {
+      console.log('💡 For MongoDB Atlas, make sure to:');
+      console.log('   1. Set MONGODB_URI in .env file');
+      console.log('   2. Whitelist your IP address in Atlas (0.0.0.0/0)');
+      console.log('   3. Check username/password are correct');
+      console.log('   4. Use MongoDB Compass to connect to Atlas for GUI management');
+    }
   });
 
 app.use(express.json({ limit: '10mb' }));
