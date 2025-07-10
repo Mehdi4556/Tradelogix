@@ -65,9 +65,6 @@ app.options('*', cors(corsOptions));
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/tradelogix';
 mongoose.connect(mongoURI, {
   bufferCommands: false,
-  bufferMaxEntries: 0,
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
   family: 4,
