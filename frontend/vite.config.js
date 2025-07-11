@@ -31,13 +31,7 @@ export default defineConfig({
     // Optimize assets
     assetsInlineLimit: 4096,
     // Enable minification
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    }
+    minify: 'esbuild'
   },
   server: {
     // Improve dev server performance
