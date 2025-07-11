@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && npm run build:analyze",
+    "build": "vite build",
     "build:analyze": "vite build --mode analyze",
     "build:production": "vite build --mode production",
     "lint": "eslint .",
