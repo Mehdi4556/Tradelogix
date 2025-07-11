@@ -22,6 +22,12 @@ const tradeSchema = new mongoose.Schema({
     trim: true,
     maxlength: [100, 'Strategy cannot exceed 100 characters']
   },
+  // Entry reason for the trade
+  entryReason: {
+    type: String,
+    enum: ['IFVG', 'Low Volume Engulfing', 'MSS'],
+    required: false
+  },
   
   // Entry Details
   entryDate: {
@@ -183,19 +189,28 @@ tradeSchema.virtual('currentValue').get(function() {
 });
 
 // Pre-save middleware to calculate profit
-tradeSchema.pre('save', function(next) {
+tradeSchema.pre('save', async function(next) {
   if (this.status === 'CLOSED' && this.exitPrice) {
-    const entryValue = this.entryPrice * this.quantity;
-    const exitValue = this.exitPrice * this.quantity;
-    const totalCosts = this.commission + this.fees;
+    // Get user's autoCalculateProfit setting
+    const User = require('./User');
+    const user = await User.findById(this.user);
     
-    if (this.type === 'BUY') {
-      this.profit = exitValue - entryValue - totalCosts;
-    } else { // SELL
-      this.profit = entryValue - exitValue - totalCosts;
+    // Only auto-calculate profit if user has this setting enabled
+    if (user && user.autoCalculateProfit) {
+      const entryValue = this.entryPrice * this.quantity;
+      const exitValue = this.exitPrice * this.quantity;
+      const totalCosts = this.commission + this.fees;
+      
+      if (this.type === 'BUY') {
+        this.profit = exitValue - entryValue - totalCosts;
+      } else { // SELL
+        this.profit = entryValue - exitValue - totalCosts;
+      }
+      
+      this.profitPercentage = (this.profit / entryValue) * 100;
     }
-    
-    this.profitPercentage = (this.profit / entryValue) * 100;
+    // If autoCalculateProfit is false, profit should be manually entered
+    // and we don't override it here
   }
   next();
 });

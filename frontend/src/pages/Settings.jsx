@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiUser, FiMail, FiEdit3, FiSave, FiX, FiSettings } from 'react-icons/fi';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,10 +13,20 @@ export default function Settings() {
   const { user, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
+    firstName: '',
+    lastName: ''
   });
   const [loading, setLoading] = useState(false);
+
+  // Update form data when user data changes
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || ''
+      });
+    }
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,10 +63,12 @@ export default function Settings() {
   };
 
   const handleCancel = () => {
-    setFormData({
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-    });
+    if (user) {
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || ''
+      });
+    }
     setIsEditing(false);
   };
 

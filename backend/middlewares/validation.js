@@ -81,6 +81,11 @@ const validateTrade = [
     .isLength({ min: 1, max: 100 })
     .withMessage('Strategy is required and cannot exceed 100 characters'),
   
+  body('entryReason')
+    .optional()
+    .isIn(['IFVG', 'Low Volume Engulfing', 'MSS'])
+    .withMessage('Entry reason must be one of: IFVG, Low Volume Engulfing, MSS'),
+  
   body('entryDate')
     .isISO8601()
     .withMessage('Entry date must be a valid date')
@@ -172,6 +177,11 @@ const validateProfileUpdate = [
     .isLength({ min: 3, max: 3 })
     .withMessage('Currency must be a 3-letter code')
     .toUpperCase(),
+  
+  body('autoCalculateProfit')
+    .optional()
+    .isBoolean()
+    .withMessage('Auto calculate profit must be a boolean value'),
   
   handleValidationErrors
 ];

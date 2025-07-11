@@ -7,6 +7,7 @@ import { toast } from 'react-hot-toast';
 import { FiUpload, FiImage, FiDollarSign, FiCalendar, FiFileText, FiTrendingUp, FiTrendingDown, FiPlus } from 'react-icons/fi';
 import axios from 'axios';
 import { API_BASE_URL } from '../config/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,10 +22,12 @@ const addTradeSchema = z.object({
   quantity: z.number().min(0.01, 'Quantity must be greater than 0'),
   entryPrice: z.number().min(0.01, 'Entry price must be greater than 0'),
   exitPrice: z.number().optional(),
+  profit: z.number().optional(),
   entryDate: z.string().min(1, 'Entry date is required'),
   exitDate: z.string().optional(),
   notes: z.string().optional(),
   strategy: z.string().optional(),
+  entryReason: z.string().optional(),
   status: z.enum(['OPEN', 'CLOSED'], { required_error: 'Status is required' }),
 });
 
@@ -32,6 +35,7 @@ export default function AddTrade() {
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const form = useForm({
@@ -42,10 +46,12 @@ export default function AddTrade() {
       quantity: '',
       entryPrice: '',
       exitPrice: '',
+      profit: '',
       entryDate: new Date().toISOString().split('T')[0],
       exitDate: '',
       notes: '',
       strategy: '',
+      entryReason: '',
       status: 'OPEN',
     },
   });
@@ -339,6 +345,36 @@ export default function AddTrade() {
                       )}
                     />
                   )}
+
+                  {/* Manual Profit - Only show if status is CLOSED */}
+                  {watchedStatus === 'CLOSED' && (
+                    <FormField
+                      control={form.control}
+                      name="profit"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-white">Profit/Loss</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <FiDollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                              <Input
+                                type="number"
+                                step="0.01"
+                                placeholder="Enter profit/loss amount"
+                                className="pl-9 bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                                {...field}
+                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                              />
+                            </div>
+                          </FormControl>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Enter positive value for profit, negative for loss
+                          </p>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                 </div>
 
                 {/* Strategy */}
@@ -354,6 +390,29 @@ export default function AddTrade() {
                           className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
                           {...field}
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Entry Reason */}
+                <FormField
+                  control={form.control}
+                  name="entryReason"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">Entry Reason (Optional)</FormLabel>
+                      <FormControl>
+                        <select
+                          className="flex h-10 w-full rounded-md border bg-gray-800 border-gray-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                          {...field}
+                        >
+                          <option value="">Select entry reason</option>
+                          <option value="IFVG">IFVG</option>
+                          <option value="Low Volume Engulfing">Low Volume Engulfing</option>
+                          <option value="MSS">MSS</option>
+                        </select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

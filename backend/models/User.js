@@ -52,6 +52,11 @@ const userSchema = new mongoose.Schema({
     default: 'USD',
     uppercase: true
   },
+  // Trading settings
+  autoCalculateProfit: {
+    type: Boolean,
+    default: false
+  },
   isActive: {
     type: Boolean,
     default: true
