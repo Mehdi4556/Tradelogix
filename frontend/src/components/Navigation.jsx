@@ -90,11 +90,15 @@ export default function Navigation() {
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               <motion.div 
-                className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-600 rounded-lg flex items-center justify-center"
+                className="w-20 h-20 sm:w-12 sm:h-12 flex items-center justify-center"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               >
-                <span className="text-white font-bold text-xs sm:text-sm">TL</span>
+                <img 
+                  src="/logo.png" 
+                  alt="TradeLogix Logo" 
+                  className="w-full h-full object-contain"
+                />
               </motion.div>
               <div className="hidden sm:block">
                 <h1 className="text-base sm:text-lg font-bold font-heading text-white hover:text-blue-400 transition-colors">TradeLogix</h1>
