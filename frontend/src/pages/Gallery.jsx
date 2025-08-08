@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { FiFilter, FiSearch, FiCalendar, FiDollarSign, FiTrendingUp, FiTrendingDown, FiImage, FiTrash2, FiAlertTriangle } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { FiFilter, FiSearch, FiCalendar, FiDollarSign, FiTrendingUp, FiTrendingDown, FiImage, FiTrash2, FiAlertTriangle, FiEdit3 } from 'react-icons/fi';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Skeleton } from '../components/ui/skeleton';
@@ -21,6 +22,7 @@ const Gallery = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imageLoadingStates, setImageLoadingStates] = useState({});
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchTrades();
@@ -455,13 +457,22 @@ const Gallery = () => {
                       <button className="flex-1 text-center text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-200 cursor-pointer">
                         Click to view details →
                       </button>
-                      <button
-                        onClick={(e) => confirmDelete(trade, e)}
-                        className="ml-3 p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-200 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:hover:bg-red-500/20 cursor-pointer"
-                        title="Delete trade"
-                      >
-                        <FiTrash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center space-x-1">
+                        <button
+                          onClick={() => navigate(`/edit-trade/${trade._id}`)}
+                          className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-all duration-200 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:hover:bg-blue-500/20 cursor-pointer"
+                          title="Edit trade"
+                        >
+                          <FiEdit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={(e) => confirmDelete(trade, e)}
+                          className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-200 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:hover:bg-red-500/20 cursor-pointer"
+                          title="Delete trade"
+                        >
+                          <FiTrash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

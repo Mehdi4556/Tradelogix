@@ -12,6 +12,7 @@ const Login = lazy(() => import('@/pages/Login'));
 const Signup = lazy(() => import('@/pages/Signup'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const AddTrade = lazy(() => import('@/pages/AddTrade'));
+const EditTrade = lazy(() => import('@/pages/EditTrade'));
 const Gallery = lazy(() => import('@/pages/Gallery'));
 const Calendar = lazy(() => import('@/pages/Calendar'));
 const Settings = lazy(() => import('@/pages/Settings'));
@@ -68,6 +69,16 @@ function AnimatedRoutes() {
             <ProtectedRoute>
               <PageTransition>
                 <AddTrade />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-trade/:tradeId"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <EditTrade />
               </PageTransition>
             </ProtectedRoute>
           }

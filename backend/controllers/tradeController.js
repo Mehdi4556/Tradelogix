@@ -112,6 +112,14 @@ exports.createTrade = catchAsync(async (req, res, next) => {
 
 // Update trade
 exports.updateTrade = catchAsync(async (req, res, next) => {
+  console.log('Update trade request body:', req.body);
+  console.log('Update trade file:', req.file);
+  
+  // Add image URL if file was uploaded to Cloudinary
+  if (req.file) {
+    req.body.image = req.file.path; // Cloudinary returns the full URL in file.path
+  }
+
   const trade = await Trade.findOneAndUpdate(
     { _id: req.params.id, user: req.user.id },
     req.body,
@@ -120,6 +128,8 @@ exports.updateTrade = catchAsync(async (req, res, next) => {
       runValidators: true
     }
   );
+
+  console.log('Updated trade:', trade);
 
   if (!trade) {
     return res.status(404).json({

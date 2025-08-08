@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { FiCalendar, FiTrendingUp, FiTrendingDown, FiDollarSign, FiEye } from 'react-icons/fi';
+import { FiCalendar, FiTrendingUp, FiTrendingDown, FiDollarSign, FiEye, FiEdit3 } from 'react-icons/fi';
 import { API_BASE_URL } from '../config/api';
 
 import { Skeleton } from '@/components/ui/skeleton';
@@ -16,6 +17,7 @@ export default function Calendar() {
   const [selectedTrades, setSelectedTrades] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchTrades();
@@ -498,6 +500,20 @@ export default function Calendar() {
                             />
                           </div>
                         )}
+
+                        {/* Edit Button */}
+                        <div className="mt-3 pt-3 border-t border-gray-700">
+                          <button
+                            onClick={() => {
+                              setShowModal(false);
+                              navigate(`/edit-trade/${trade._id}`);
+                            }}
+                            className="flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-200 cursor-pointer"
+                          >
+                            <FiEdit3 className="h-4 w-4" />
+                            Edit Trade
+                          </button>
+                        </div>
                       </div>
                     );
                   })}

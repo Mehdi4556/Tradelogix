@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { FiX, FiCalendar, FiDollarSign, FiTrendingUp, FiTrendingDown, FiClock, FiTarget, FiFileText, FiMaximize2, FiMinimize2, FiTrash2, FiAlertTriangle } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { FiX, FiCalendar, FiDollarSign, FiTrendingUp, FiTrendingDown, FiClock, FiTarget, FiFileText, FiMaximize2, FiMinimize2, FiTrash2, FiAlertTriangle, FiEdit3 } from 'react-icons/fi';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { API_BASE_URL } from '../config/api';
@@ -8,6 +9,7 @@ const TradeModal = ({ trade, isOpen, onClose, onTradeDeleted }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showFullImage, setShowFullImage] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const navigate = useNavigate();
 
   // Handle escape key
   useEffect(() => {
@@ -59,6 +61,11 @@ const TradeModal = ({ trade, isOpen, onClose, onTradeDeleted }) => {
       console.error('Error deleting trade:', error);
       toast.error('Failed to delete trade');
     }
+  };
+
+  const handleEditTrade = () => {
+    onClose();
+    navigate(`/edit-trade/${trade._id}`);
   };
 
   if (!isOpen || !trade) return null;
@@ -120,6 +127,13 @@ const TradeModal = ({ trade, isOpen, onClose, onTradeDeleted }) => {
             </div>
             
             <div className="flex items-center space-x-2">
+              <button
+                onClick={handleEditTrade}
+                className="p-2 hover:bg-blue-500/20 text-gray-400 hover:text-blue-400 rounded-lg transition-colors duration-200 cursor-pointer"
+                title="Edit trade"
+              >
+                <FiEdit3 className="w-5 h-5" />
+              </button>
               <button
                 onClick={() => setDeleteConfirm(true)}
                 className="p-2 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-lg transition-colors duration-200 cursor-pointer"

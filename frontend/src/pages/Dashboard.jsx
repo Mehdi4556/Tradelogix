@@ -9,9 +9,10 @@ import {
   FiImage,
   FiUsers,
   FiTrash2,
-  FiAlertTriangle
+  FiAlertTriangle,
+  FiEdit3
 } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -22,6 +23,7 @@ import { API_BASE_URL } from '../config/api';
 
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   
   // Temporary debug log
   console.log('Dashboard - user object:', user);
@@ -517,16 +519,28 @@ const Dashboard = () => {
                             {new Date(trade.entryDate).toLocaleDateString()}
                           </div>
                         </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            confirmDelete(trade);
-                          }}
-                          className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-200 cursor-pointer"
-                          title="Delete trade"
-                        >
-                          <FiTrash2 className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center space-x-1">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/edit-trade/${trade._id}`);
+                            }}
+                            className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-all duration-200 cursor-pointer"
+                            title="Edit trade"
+                          >
+                            <FiEdit3 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              confirmDelete(trade);
+                            }}
+                            className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-200 cursor-pointer"
+                            title="Delete trade"
+                          >
+                            <FiTrash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );

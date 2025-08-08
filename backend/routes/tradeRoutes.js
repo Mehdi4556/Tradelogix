@@ -16,7 +16,7 @@ router
 router
   .route('/:id')
   .get(tradeController.getTrade)
-  .patch(tradeController.updateTrade)
+  .patch(tradeController.uploadTradeImage, tradeController.updateTrade)
   .delete(tradeController.deleteTrade);
 
 // Trade-specific operations
