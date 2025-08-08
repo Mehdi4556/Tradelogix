@@ -140,10 +140,15 @@ const Gallery = () => {
   };
 
   const calculatePnL = (trade) => {
-    if (!trade.exitPrice) return 0;
-    return trade.type === 'BUY' 
-      ? (trade.exitPrice - trade.entryPrice) * trade.quantity
-      : (trade.entryPrice - trade.exitPrice) * trade.quantity;
+    if (trade.status !== 'CLOSED') return 0;
+    // Use stored profit when auto-calc is disabled; otherwise compute from prices
+    if (trade?.user?.autoCalculateProfit) {
+      if (!trade.exitPrice) return 0;
+      return trade.type === 'BUY'
+        ? (trade.exitPrice - trade.entryPrice) * trade.quantity
+        : (trade.entryPrice - trade.exitPrice) * trade.quantity;
+    }
+    return typeof trade.profit === 'number' ? trade.profit : 0;
   };
 
   const handleDeleteTrade = async (tradeId) => {

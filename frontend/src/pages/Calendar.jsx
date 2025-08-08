@@ -54,10 +54,14 @@ export default function Calendar() {
       
       // Calculate P&L for the day
       const dayPnL = dayTrades.reduce((total, trade) => {
-        if (trade.status === 'CLOSED' && trade.exitPrice) {
-          const pnl = trade.type === 'BUY' 
-            ? (trade.exitPrice - trade.entryPrice) * trade.quantity
-            : (trade.entryPrice - trade.exitPrice) * trade.quantity;
+        if (trade.status === 'CLOSED') {
+          const pnl = trade?.user?.autoCalculateProfit
+            ? (trade.exitPrice 
+                ? (trade.type === 'BUY' 
+                    ? (trade.exitPrice - trade.entryPrice) * trade.quantity
+                    : (trade.entryPrice - trade.exitPrice) * trade.quantity)
+                : 0)
+            : (typeof trade.profit === 'number' ? trade.profit : 0);
           return total + pnl;
         }
         return total;
@@ -124,11 +128,14 @@ export default function Calendar() {
   };
 
   const calculatePnL = (trade) => {
-    if (trade.status === 'CLOSED' && trade.exitPrice) {
-      const pnl = trade.type === 'BUY' 
-        ? (trade.exitPrice - trade.entryPrice) * trade.quantity
-        : (trade.entryPrice - trade.exitPrice) * trade.quantity;
-      return pnl;
+    if (trade.status === 'CLOSED') {
+      if (trade?.user?.autoCalculateProfit) {
+        if (!trade.exitPrice) return null;
+        return trade.type === 'BUY' 
+          ? (trade.exitPrice - trade.entryPrice) * trade.quantity
+          : (trade.entryPrice - trade.exitPrice) * trade.quantity;
+      }
+      return typeof trade.profit === 'number' ? trade.profit : null;
     }
     return null;
   };

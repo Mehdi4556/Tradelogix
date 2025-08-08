@@ -60,17 +60,20 @@ const Dashboard = () => {
       let bestTrade = 0;
       let worstTrade = 0;
 
+      const useAuto = user?.autoCalculateProfit;
       closedTrades.forEach(trade => {
-        if (trade.exitPrice) {
-          const pnl = trade.type === 'BUY' 
-            ? (trade.exitPrice - trade.entryPrice) * trade.quantity
-            : (trade.entryPrice - trade.exitPrice) * trade.quantity;
-          
-          totalPnL += pnl;
-          if (pnl > 0) wins++;
-          if (pnl > bestTrade) bestTrade = pnl;
-          if (pnl < worstTrade) worstTrade = pnl;
-        }
+        const pnl = useAuto
+          ? (trade.exitPrice
+              ? (trade.type === 'BUY'
+                  ? (trade.exitPrice - trade.entryPrice) * trade.quantity
+                  : (trade.entryPrice - trade.exitPrice) * trade.quantity)
+              : 0)
+          : (typeof trade.profit === 'number' ? trade.profit : 0);
+
+        totalPnL += pnl;
+        if (pnl > 0) wins++;
+        if (pnl > bestTrade) bestTrade = pnl;
+        if (pnl < worstTrade) worstTrade = pnl;
       });
 
       const winRate = closedTrades.length > 0 ? (wins / closedTrades.length) * 100 : 0;
@@ -95,10 +98,14 @@ const Dashboard = () => {
   };
 
   const calculateTradePnL = (trade) => {
-    if (trade.status !== 'CLOSED' || !trade.exitPrice) return 0;
-    return trade.type === 'BUY' 
-      ? (trade.exitPrice - trade.entryPrice) * trade.quantity
-      : (trade.entryPrice - trade.exitPrice) * trade.quantity;
+    if (trade.status !== 'CLOSED') return 0;
+    if (user?.autoCalculateProfit) {
+      if (!trade.exitPrice) return 0;
+      return trade.type === 'BUY'
+        ? (trade.exitPrice - trade.entryPrice) * trade.quantity
+        : (trade.entryPrice - trade.exitPrice) * trade.quantity;
+    }
+    return typeof trade.profit === 'number' ? trade.profit : 0;
   };
 
   const handleDeleteTrade = async (tradeId) => {

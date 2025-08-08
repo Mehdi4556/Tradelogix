@@ -63,10 +63,14 @@ const TradeModal = ({ trade, isOpen, onClose, onTradeDeleted }) => {
 
   if (!isOpen || !trade) return null;
 
-  const pnl = trade.exitPrice ? 
-    (trade.type === 'BUY' ? 
-      (trade.exitPrice - trade.entryPrice) * trade.quantity : 
-      (trade.entryPrice - trade.exitPrice) * trade.quantity) 
+  const pnl = trade.status === 'CLOSED' 
+    ? (trade?.user?.autoCalculateProfit
+        ? (trade.exitPrice 
+            ? (trade.type === 'BUY' 
+                ? (trade.exitPrice - trade.entryPrice) * trade.quantity 
+                : (trade.entryPrice - trade.exitPrice) * trade.quantity)
+            : 0)
+        : (typeof trade.profit === 'number' ? trade.profit : 0))
     : 0;
 
   const isProfit = pnl > 0;
